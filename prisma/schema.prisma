@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model anuidade {
+  id    Int     @id @default(autoincrement())
+  valor Int
+  data  String  @db.VarChar(10)
+  ativo Boolean @default(true)
+}
+
+model auditoria_autorizacao_impressao {
+  id             Int    @id @unique(map: "id") @default(autoincrement())
+  nome_pescador  String @db.VarChar(50)
+  ficha_pescador String @db.VarChar(5)
+  acesso         Int
+  usuario        String @db.VarChar(20)
+  data           String @db.VarChar(11)
+}
+
+model caixa {
+  pagamento      DateTime @db.Date
+  vencimento     DateTime @db.Date
+  id             Int      @id @unique(map: "id") @default(autoincrement())
+  usuario        Int
+  acesso         Int
+  dias_diferenca Int
+  pescador       Int
+  nome_pescador  String   @db.VarChar(50)
+  valor          Int
+  ativo          Boolean  @default(true)
+}
+
+model caixa3 {
+  id             Int     @id @unique(map: "id") @default(autoincrement())
+  usuario        Int
+  acesso         Int
+  vencimento     String  @db.VarChar(11)
+  pagamento      String  @db.VarChar(11)
+  dias_diferenca Int
+  pescador       Int
+  nome_pescador  String  @db.VarChar(50)
+  valor          Int
+  ativo          Boolean @default(true)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model cpfs_invalidos {
+  ficha             String  @db.VarChar(5)
+  nome              String? @db.VarChar(50)
+  endereco          String? @db.VarChar(30)
+  numero            String? @db.VarChar(8)
+  bairro            String? @db.VarChar(25)
+  cidade            String? @db.VarChar(25)
+  estado            String? @db.VarChar(2)
+  cep               String? @db.VarChar(12)
+  celular           String? @db.VarChar(20)
+  telefone          String? @db.VarChar(20)
+  tel_recado        String? @db.VarChar(20)
+  cpf               String? @db.VarChar(15)
+  rg                String? @db.VarChar(25)
+  orgao_emissor     String? @db.VarChar(8)
+  rgp               String? @db.VarChar(15)
+  pis               String? @db.VarChar(16)
+  cei               String? @db.VarChar(20)
+  vencimento        String? @db.VarChar(11)
+  filiacao          String? @db.VarChar(16)
+  nascimento        String? @db.VarChar(10)
+  observacao        String? @db.VarChar(30)
+  emissao_rg        String? @db.VarChar(10)
+  pai               String? @db.VarChar(50)
+  mae               String? @db.VarChar(50)
+  data_rgp          String? @db.VarChar(10)
+  titulo_eleitor    String? @db.VarChar(20)
+  carteira_trabalho String? @db.VarChar(20)
+  capataz           String? @db.VarChar(30)
+  acesso            Int?    @default(0)
+  ativo             Boolean
+
+  @@ignore
+}
+
+model global {
+  chave   String @unique(map: "chave") @db.VarChar(255)
+  string  String @db.VarChar(110)
+  inteiro Int
+  valor   Float? @db.Float
+}
+
+model incr {
+  Id Int @id @default(autoincrement())
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model lista_cidades {
+  cidade String? @db.VarChar(25)
+  quant  BigInt?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model lista_estados {
+  estado String? @db.VarChar(2)
+  quant  BigInt?
+
+  @@ignore
+}
+
+model nome_colonia {
+  id         Int          @id @unique(map: "id")
+  nome       String       @db.VarChar(11)
+  pescadores pescadores[]
+
+  @@index([id], map: "id_2")
+  @@index([id], map: "id_3")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model nome_pai_mae {
+  ficha             String?  @db.VarChar(5)
+  nome              String?  @db.VarChar(50)
+  endereco          String?  @db.VarChar(150)
+  numero            String?  @db.VarChar(8)
+  bairro            String?  @db.VarChar(25)
+  cidade            String?  @db.VarChar(25)
+  estado            String?  @db.VarChar(2)
+  cep               String?  @db.VarChar(12)
+  celular           String?  @db.VarChar(20)
+  telefone          String?  @db.VarChar(20)
+  tel_recado        String?  @db.VarChar(20)
+  cpf               String?  @db.VarChar(15)
+  rg                String?  @db.VarChar(25)
+  orgao_emissor     String?  @db.VarChar(8)
+  rgp               String?  @db.VarChar(15)
+  pis               String?  @db.VarChar(16)
+  cei               String?  @db.VarChar(20)
+  vencimento        String?  @db.VarChar(11)
+  filiacao          String?  @db.VarChar(16)
+  nascimento        String?  @db.VarChar(10)
+  observacao        String?  @db.VarChar(30)
+  emissao_rg        String?  @db.VarChar(10)
+  pai               String?  @db.VarChar(50)
+  mae               String?  @db.VarChar(50)
+  data_rgp          String?  @db.VarChar(10)
+  titulo_eleitor    String?  @db.VarChar(20)
+  carteira_trabalho String?  @db.VarChar(20)
+  capataz           String?  @db.VarChar(30)
+  acesso            Int?
+  ativo             Boolean?
+
+  @@ignore
+}
+
+model pescadores {
+  id                Int           @id @default(autoincrement())
+  ficha             String        @db.VarChar(5)
+  nome              String?       @db.VarChar(50)
+  endereco          String?       @db.VarChar(150)
+  numero            String?       @db.VarChar(8)
+  bairro            String?       @db.VarChar(25)
+  cidade            String?       @db.VarChar(25)
+  estado            String?       @db.VarChar(2)
+  cep               String?       @db.VarChar(12)
+  celular           String?       @db.VarChar(20)
+  telefone          String?       @db.VarChar(20)
+  tel_recado        String?       @db.VarChar(20)
+  cpf               String?       @unique(map: "cpf") @db.VarChar(15)
+  rg                String?       @db.VarChar(25)
+  orgao_emissor     String?       @db.VarChar(8)
+  rgp               String?       @db.VarChar(15)
+  pis               String?       @db.VarChar(16)
+  cei               String?       @db.VarChar(20)
+  cnh               String?       @db.VarChar(20)
+  emissao_cnh       String?       @db.VarChar(11)
+  email             String?       @db.VarChar(255)
+  vencimento        String?       @db.VarChar(11)
+  filiacao          String?       @db.VarChar(16)
+  nascimento        String?       @db.VarChar(10)
+  local_nascimento  String?       @db.VarChar(200)
+  observacao        String?       @db.VarChar(30)
+  emissao_rg        String?       @db.VarChar(10)
+  pai               String?       @db.VarChar(50)
+  mae               String?       @db.VarChar(50)
+  data_rgp          String?       @db.VarChar(10)
+  titulo_eleitor    String?       @db.VarChar(20)
+  carteira_trabalho String?       @db.VarChar(20)
+  capataz           String?       @db.VarChar(30)
+  profissao         String?       @db.VarChar(255)
+  estado_civil      String?       @db.VarChar(255)
+  codigo_caepf      String?       @db.VarChar(255)
+  senha_caepf       String?       @db.VarChar(255)
+  acesso            Int?          @default(0)
+  ativo             Boolean       @default(true)
+  nome_colonia      nome_colonia? @relation(fields: [acesso], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "pescadores_ibfk_1")
+
+  @@index([acesso], map: "acesso")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model registros_colonia {
+  acesso Int?
+  quant  BigInt?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model rg_duplicado {
+  ficha             String?  @db.VarChar(5)
+  nome              String?  @db.VarChar(50)
+  endereco          String?  @db.VarChar(150)
+  numero            String?  @db.VarChar(8)
+  bairro            String?  @db.VarChar(25)
+  cidade            String?  @db.VarChar(25)
+  estado            String?  @db.VarChar(2)
+  cep               String?  @db.VarChar(12)
+  celular           String?  @db.VarChar(20)
+  telefone          String?  @db.VarChar(20)
+  tel_recado        String?  @db.VarChar(20)
+  cpf               String?  @db.VarChar(15)
+  rg                String?  @db.VarChar(25)
+  orgao_emissor     String?  @db.VarChar(8)
+  rgp               String?  @db.VarChar(15)
+  pis               String?  @db.VarChar(16)
+  cei               String?  @db.VarChar(20)
+  vencimento        String?  @db.VarChar(11)
+  filiacao          String?  @db.VarChar(16)
+  nascimento        String?  @db.VarChar(10)
+  observacao        String?  @db.VarChar(30)
+  emissao_rg        String?  @db.VarChar(10)
+  pai               String?  @db.VarChar(50)
+  mae               String?  @db.VarChar(50)
+  data_rgp          String?  @db.VarChar(10)
+  titulo_eleitor    String?  @db.VarChar(20)
+  carteira_trabalho String?  @db.VarChar(20)
+  capataz           String?  @db.VarChar(30)
+  acesso            Int?
+  ativo             Boolean?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model sem_contato {
+  ficha             String?  @db.VarChar(5)
+  nome              String?  @db.VarChar(50)
+  endereco          String?  @db.VarChar(150)
+  numero            String?  @db.VarChar(8)
+  bairro            String?  @db.VarChar(25)
+  cidade            String?  @db.VarChar(25)
+  estado            String?  @db.VarChar(2)
+  cep               String?  @db.VarChar(12)
+  celular           String?  @db.VarChar(20)
+  telefone          String?  @db.VarChar(20)
+  tel_recado        String?  @db.VarChar(20)
+  cpf               String?  @db.VarChar(15)
+  rg                String?  @db.VarChar(25)
+  orgao_emissor     String?  @db.VarChar(8)
+  rgp               String?  @db.VarChar(15)
+  pis               String?  @db.VarChar(16)
+  cei               String?  @db.VarChar(20)
+  vencimento        String?  @db.VarChar(11)
+  filiacao          String?  @db.VarChar(16)
+  nascimento        String?  @db.VarChar(10)
+  observacao        String?  @db.VarChar(30)
+  emissao_rg        String?  @db.VarChar(10)
+  pai               String?  @db.VarChar(50)
+  mae               String?  @db.VarChar(50)
+  data_rgp          String?  @db.VarChar(10)
+  titulo_eleitor    String?  @db.VarChar(20)
+  carteira_trabalho String?  @db.VarChar(20)
+  capataz           String?  @db.VarChar(30)
+  acesso            Int?
+  ativo             Boolean?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model sem_data {
+  ficha             String?  @db.VarChar(5)
+  nome              String?  @db.VarChar(50)
+  endereco          String?  @db.VarChar(150)
+  numero            String?  @db.VarChar(8)
+  bairro            String?  @db.VarChar(25)
+  cidade            String?  @db.VarChar(25)
+  estado            String?  @db.VarChar(2)
+  cep               String?  @db.VarChar(12)
+  celular           String?  @db.VarChar(20)
+  telefone          String?  @db.VarChar(20)
+  tel_recado        String?  @db.VarChar(20)
+  cpf               String?  @db.VarChar(15)
+  rg                String?  @db.VarChar(25)
+  orgao_emissor     String?  @db.VarChar(8)
+  rgp               String?  @db.VarChar(15)
+  pis               String?  @db.VarChar(16)
+  cei               String?  @db.VarChar(20)
+  vencimento        String?  @db.VarChar(11)
+  filiacao          String?  @db.VarChar(16)
+  nascimento        String?  @db.VarChar(10)
+  observacao        String?  @db.VarChar(30)
+  emissao_rg        String?  @db.VarChar(10)
+  pai               String?  @db.VarChar(50)
+  mae               String?  @db.VarChar(50)
+  data_rgp          String?  @db.VarChar(10)
+  titulo_eleitor    String?  @db.VarChar(20)
+  carteira_trabalho String?  @db.VarChar(20)
+  capataz           String?  @db.VarChar(30)
+  acesso            Int?
+  ativo             Boolean?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model todos {
+  ficha      String?  @db.VarChar(5)
+  nome       String?  @db.VarChar(50)
+  vencimento String?  @db.VarChar(11)
+  nascimento String?  @db.VarChar(10)
+  ativo      Boolean?
+  acesso     Int?
+
+  @@ignore
+}
+
+model usuarios {
+  id      Int    @id @default(autoincrement())
+  usuario String @unique(map: "usuario") @db.VarChar(20)
+  senha   String @db.VarChar(10)
+  acesso  Int
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
