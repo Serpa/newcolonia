@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Button, CircularProgress } from '@mui/material';
 import Docx from '../components/docxGenerate/Docx'
-import Dashboard from './dashboard';
+import Dashboard from './index';
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]"
 
 
 
@@ -19,7 +21,6 @@ export default function DatagridPescadores() {
   }, [])
 
   const columns = [
-    { field: 'ficha', headerName: 'Ficha' },
     { field: 'nome', headerName: 'Nome', flex: 1 },
     { field: 'telefone', headerName: 'Telefone', flex: 1 },
     { field: 'celular', headerName: 'Celular', flex: 1 },
@@ -75,4 +76,22 @@ export default function DatagridPescadores() {
       </div>
     </Dashboard>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions)
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {
+
+    }
+  }
 }
