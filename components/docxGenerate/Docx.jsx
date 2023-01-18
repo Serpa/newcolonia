@@ -3,6 +3,8 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 import { Button } from "@mui/material";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+
 const path = require("path");
 let PizZipUtils = null;
 if (typeof window !== "undefined") {
@@ -49,7 +51,7 @@ export default function Docx(props) {
   return (
     <div className="p-2">
       <Button variant="contained" onClick={generateDocument}>
-        Desfiliação
+      <AttachFileIcon/>
       </Button>
     </div>
   );

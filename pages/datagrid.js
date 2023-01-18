@@ -5,6 +5,9 @@ import Docx from '../components/docxGenerate/Docx'
 import Dashboard from './index';
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]"
+import EditIcon from '@mui/icons-material/Edit';
+import { useRouter } from 'next/router';
+
 
 
 
@@ -12,6 +15,7 @@ export default function DatagridPescadores() {
 
   const [tableData, setTableData] = useState([])
   const [loading, setLoading] = useState(true);// loading não ta funcionando
+  const router = useRouter();
 
   useEffect(() => {
     fetch("/api/pescadores")
@@ -35,9 +39,9 @@ export default function DatagridPescadores() {
           <Button
             variant="contained"
             color="warning"
-            onClick={() => console.log(cellValues)}
+            onClick={() => router.push(`/edit/${cellValues.id}`)}
           >
-            Alterar
+            <EditIcon/>
           </Button>
         );
       }, flex: 1

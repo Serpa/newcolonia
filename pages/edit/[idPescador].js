@@ -1,26 +1,50 @@
-import { Button, TextField } from '@mui/material'
+import { Button, CircularProgress, TextField } from '@mui/material'
 import { useSnackbar, withSnackbar } from 'notistack';
-import Dashboard from './index';
-import React from 'react'
+import Dashboard from '../index';
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react"
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import moment from 'moment';
+
+const fetcher = url => fetch(url).then(r => r.json())
 
 export default function Cadastro() {
   const { data: session, status } = useSession()
-  const { register, handleSubmit, reset } = useForm();
-
+  const { register, handleSubmit, reset, setValue } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const router = useRouter()
+  const { idPescador } = router.query
+  const { data: pescador, error } = useSWR(idPescador ? `/api/pescadores/${idPescador}` : null, fetcher)
+
+  useEffect(() => {
+    if (pescador === null) {
+      invalidId();
+      router.push("/datagrid")
+    }
+  }, [pescador])
+
 
   const sucessMSG = () => {
-    enqueueSnackbar('Pescador cadastrado com sucesso!', { variant: 'success' });
+    enqueueSnackbar('Cadastrado atualizado com sucesso!', { variant: 'success' });
   };
 
   const errorMSG = () => {
-    enqueueSnackbar('Erro ao cadastrar!', { variant: 'error' });
+    enqueueSnackbar('Erro ao alterar!', { variant: 'error' });
   };
 
+  const invalidId = () => {
+    enqueueSnackbar('Cadastro não encontrado!', { variant: 'error' });
+  };
+
+
+  const convertDate = (date) => {
+    return moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
+  }
+
   const onSubmit = data => {
-    fetch("/api/pescadores/cadastro", {
+    fetch("/api/pescadores/update", {
       method: 'POST',
       body: JSON.stringify(data),
       headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -28,7 +52,7 @@ export default function Cadastro() {
       .then((response) => {
         if (response.status === 200) {
           sucessMSG()
-          reset();
+          router.push('/datagrid')
         } else {
           errorMSG()
         }
@@ -36,6 +60,58 @@ export default function Cadastro() {
       })
       .catch((response) => { console.log(response) });
   };
+
+  if (error)
+    return (
+      <div>
+        <h1>404</h1>
+        <p>Loading failed...</p>
+      </div>
+    );
+
+  if (!pescador)
+    return (
+      <Dashboard>
+        <CircularProgress style={{ display: 'flex', alignSelf: 'center' }} />
+      </Dashboard>
+    );
+  if (pescador) {
+    setValue('ficha', pescador?.ficha);
+    setValue('nome', pescador?.nome);
+    setValue('endereco', pescador?.endereco);
+    setValue('numero', pescador?.numero);
+    setValue('bairro', pescador?.bairro);
+    setValue('cidade', pescador?.cidade);
+    setValue('estado', pescador?.estado);
+    setValue('cep', pescador?.cep);
+    setValue('celular', pescador?.celular);
+    setValue('telefone', pescador?.telefone);
+    setValue('tel_recado', pescador?.tel_recado);
+    setValue('rg', pescador?.rg);
+    setValue('cpf', pescador?.cpf);
+    setValue('orgao_emissor', pescador?.orgao_emissor);
+    setValue('rgp', pescador?.rgp);
+    setValue('pis', pescador?.pis);
+    setValue('cei', pescador?.cei);
+    setValue('cnh', pescador?.cnh);
+    setValue('emissao_cnh', convertDate(pescador?.emissao_cnh));
+    setValue('email', pescador?.email);
+    setValue('vencimento', convertDate(pescador?.vencimento));
+    setValue('filiacao', convertDate(pescador?.filiacao));
+    setValue('nascimento', convertDate(pescador?.nascimento));
+    setValue('local_nascimento', pescador?.local_nascimento);
+    setValue('observacao', pescador?.observacao);
+    setValue('emissao_rg', convertDate(pescador?.emissao_rg));
+    setValue('pai', pescador?.pai);
+    setValue('mae', pescador?.mae);
+    setValue('data_rgp', convertDate(pescador?.data_rgp));
+    setValue('titulo_eleitor', pescador?.titulo_eleitor);
+    setValue('carteira_trabalho', pescador?.carteira_trabalho);
+    setValue('capataz', pescador?.capataz);
+    setValue('profissao', pescador?.profissao);
+    setValue('estado_civil', pescador?.estado_civil);
+    setValue('id', pescador?.id);
+  }
 
   return (
     <Dashboard>
@@ -46,6 +122,7 @@ export default function Cadastro() {
           id="ficha"
           max="99999"
           label="Ficha"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o número da ficha"
           margin="normal"
@@ -57,6 +134,7 @@ export default function Cadastro() {
         <TextField
           id="nome"
           label="Nome"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o nome"
           margin="normal"
@@ -79,6 +157,7 @@ export default function Cadastro() {
         <TextField
           id="local_nascimento"
           label="Local de Nascimento"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o local de nascimento"
           fullWidth
@@ -89,6 +168,7 @@ export default function Cadastro() {
         <TextField
           id="observacao"
           label="Observação"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite a observação"
           fullWidth
@@ -99,6 +179,7 @@ export default function Cadastro() {
         <TextField
           id="endereco"
           label="Endereço"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o endereço"
           fullWidth
@@ -109,6 +190,7 @@ export default function Cadastro() {
         <TextField
           id="numero"
           label="Número"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o número"
           fullWidth
@@ -119,6 +201,7 @@ export default function Cadastro() {
         <TextField
           id="bairro"
           label="Bairro"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o bairro"
           fullWidth
@@ -129,6 +212,7 @@ export default function Cadastro() {
         <TextField
           id="cidade"
           label="Cidade"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o cidade"
           fullWidth
@@ -139,6 +223,7 @@ export default function Cadastro() {
         <TextField
           id="estado"
           label="Estado"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o estado"
           fullWidth
@@ -149,6 +234,7 @@ export default function Cadastro() {
         <TextField
           id="cep"
           label="CEP"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o CEP"
           fullWidth
@@ -171,6 +257,7 @@ export default function Cadastro() {
         <TextField
           id="profissao"
           label="Profissão"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite a profissão"
           fullWidth
@@ -181,6 +268,7 @@ export default function Cadastro() {
         <TextField
           id="estado_civil"
           label="Estado Civil"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o estado civil"
           fullWidth
@@ -191,6 +279,7 @@ export default function Cadastro() {
         <TextField
           id="celular"
           label="Celular"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o celular"
           fullWidth
@@ -201,6 +290,7 @@ export default function Cadastro() {
         <TextField
           id="tel_recado"
           label="Telefone para Recados"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o telefone"
           fullWidth
@@ -212,6 +302,7 @@ export default function Cadastro() {
           type="email"
           id="email"
           label="E-mail"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o email"
           fullWidth
@@ -222,6 +313,7 @@ export default function Cadastro() {
         <TextField
           id="capataz"
           label="Capataz"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o nome do capataz"
           fullWidth
@@ -233,6 +325,7 @@ export default function Cadastro() {
         <TextField
           id="cpf"
           label="CPF"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o CPF"
           fullWidth
@@ -244,6 +337,7 @@ export default function Cadastro() {
         <TextField
           id="rg"
           label="RG"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o RG"
           fullWidth
@@ -254,6 +348,7 @@ export default function Cadastro() {
         <TextField
           id="orgao_emissor"
           label="Orgão Emissor"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o Orgão Emissor"
           fullWidth
@@ -263,7 +358,9 @@ export default function Cadastro() {
 
         <TextField
           id="emissao_rg"
+          type="date"
           label="Data de emissão RG"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite a data de emissão do RG"
           fullWidth
@@ -274,6 +371,7 @@ export default function Cadastro() {
         <TextField
           id="pai"
           label="Nome do Pai"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o nome do pai"
           fullWidth
@@ -284,6 +382,7 @@ export default function Cadastro() {
         <TextField
           id="mae"
           label="Nome da Mãe"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o nome da mãe"
           fullWidth
@@ -294,6 +393,7 @@ export default function Cadastro() {
         <TextField
           id="rgp"
           label="RGP"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o RGP"
           fullWidth
@@ -316,6 +416,7 @@ export default function Cadastro() {
         <TextField
           id="pis"
           label="PIS"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o PIS"
           fullWidth
@@ -326,6 +427,7 @@ export default function Cadastro() {
         <TextField
           id="cei"
           label="CEI"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o CEI"
           fullWidth
@@ -336,6 +438,7 @@ export default function Cadastro() {
         <TextField
           id="cnh"
           label="CNH"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o CNH"
           fullWidth
@@ -358,6 +461,7 @@ export default function Cadastro() {
         <TextField
           id="titulo_eleitor"
           label="Título de Eleitor"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o título de eleitor"
           fullWidth
@@ -368,6 +472,7 @@ export default function Cadastro() {
         <TextField
           id="carteira_trabalho"
           label="Carteira de Trabalho"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite a Carteira de Trabalho"
           fullWidth
@@ -378,6 +483,7 @@ export default function Cadastro() {
         <TextField
           id="codigo_caepf"
           label="Código CAEPF"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite o código CAEPF"
           fullWidth
@@ -389,6 +495,7 @@ export default function Cadastro() {
           type="password"
           id="senha_caepf"
           label="Senha CAEPF"
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           placeholder="Digite a senha CAEPF"
           fullWidth
@@ -397,7 +504,7 @@ export default function Cadastro() {
         />
 
         <div style={{ display: "flex", margin: "5px", justifyContent: "center", alignItems: "center", padding: "10px" }}>
-          <Button type="submit" variant="contained" style={{ width: "300px" }}>Cadastrar</Button>
+          <Button type="submit" variant="contained" style={{ width: "300px" }}>Salvar</Button>
         </div>
       </form>
     </Dashboard>
