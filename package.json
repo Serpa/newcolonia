@@ -17,6 +17,7 @@
     "@mui/x-data-grid": "^5.17.13",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.6.1",
+    "cloudinary": "^1.33.0",
     "docxtemplater": "^3.32.4",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
@@ -33,6 +34,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.39.7",
     "recharts": "^2.1.16",
+    "streamifier": "^0.1.1",
     "swr": "^2.0.0"
   },
   "devDependencies": {

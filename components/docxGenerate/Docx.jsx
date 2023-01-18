@@ -3,7 +3,7 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 import { Button } from "@mui/material";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 const path = require("path");
 let PizZipUtils = null;
@@ -23,8 +23,9 @@ export default function Docx(props) {
   var mes = String(data.getMonth() + 1).padStart(2, "0");
   var ano = data.getFullYear();
   var dataAtual = dia + "/" + mes + "/" + ano;
-  const pescador = { ...props.dados, data: dataAtual };
-  const content = path.resolve(__dirname, "docs", "formulario.docx");
+  const pescador = { ...props.pescador, data: dataAtual };
+  // const content = path.resolve(__dirname, "docs", "formulario.docx");
+  const content = props.doc.urlDocumento;
   const generateDocument = () => {
     loadFile(content, function (error, content) {
       if (error) {
@@ -34,10 +35,11 @@ export default function Docx(props) {
       const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
         linebreaks: true,
-        nullGetter() { return ''; }
+        nullGetter() {
+          return "";
+        },
       });
 
-      // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
       doc.render(pescador);
       const out = doc.getZip().generate({
         type: "blob",
@@ -49,10 +51,8 @@ export default function Docx(props) {
   };
 
   return (
-    <div className="p-2">
-      <Button variant="contained" onClick={generateDocument}>
-      <AttachFileIcon/>
-      </Button>
-    </div>
+    <Button style={{ width: "100%" }} onClick={generateDocument}>
+      {props.children}
+    </Button>
   );
 }

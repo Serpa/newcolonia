@@ -51,6 +51,19 @@ export const mainListItems = (
       </ListItemButton>
     </Link>
 
+    <Link href="/documentos" style={{
+      textDecoration: 'none',
+      color: 'black',
+      fontSize: 30,
+    }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <PeopleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Documentos" />
+      </ListItemButton>
+    </Link>
+
   </React.Fragment>
 );
 

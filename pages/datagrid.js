@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Button, CircularProgress } from '@mui/material';
-import Docx from '../components/docxGenerate/Docx'
+import { Button, CircularProgress, Grid, Paper } from '@mui/material';
 import Dashboard from './index';
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]"
 import EditIcon from '@mui/icons-material/Edit';
 import { useRouter } from 'next/router';
-
+import DocumentDialog from '../components/DocumentDialog'
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
 
@@ -17,11 +17,24 @@ export default function DatagridPescadores() {
   const [loading, setLoading] = useState(true);// loading não ta funcionando
   const router = useRouter();
 
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (value) => {
+    setOpen(false);
+    console.log(value);
+    setSelectedValue(value);
+  };
+
   useEffect(() => {
     fetch("/api/pescadores")
       .then((data) => data.json())
       .then((data) => setTableData(data))
-      setLoading(false)
+    setLoading(false)
   }, [])
 
   const columns = [
@@ -41,7 +54,7 @@ export default function DatagridPescadores() {
             color="warning"
             onClick={() => router.push(`/edit/${cellValues.id}`)}
           >
-            <EditIcon/>
+            <EditIcon />
           </Button>
         );
       }, flex: 1
@@ -50,34 +63,49 @@ export default function DatagridPescadores() {
       field: "Documentos",
       renderCell: (cellValues) => {
         return (
-          <Docx
-            variant="contained"
-            color="primary"
-            dados={cellValues.row}
-
-          >
-            Documentos
-          </Docx>
+          <>
+            <Button variant="outlined" onClick={handleClickOpen}>
+              <AttachFileIcon />
+            </Button>
+            <DocumentDialog
+              pescador={cellValues.row}
+              selectedValue={selectedValue}
+              open={open}
+              onClose={handleClose} />
+          </>
         );
       }, flex: 1
     }
   ]
 
   return (
+
     <Dashboard>
-      <div style={{ height: 800, width: '100%' }}>
-        <DataGrid
-          components={{
-            Toolbar: GridToolbar,
-            LoadingOverlay: CircularProgress,
+
+      <Grid item xs={12}>
+        <Paper
+          sx={{
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
           }}
-          rows={tableData}
-          columns={columns}
-          allowColumnResizing={true}
-          rowsPerPageOptions={[5, 10, 20, 100]}
-          loading={loading}
-        />
-      </div>
+        >
+          <div style={{ height: 800, width: '100%' }}>
+            <DataGrid
+              components={{
+                Toolbar: GridToolbar,
+                LoadingOverlay: CircularProgress,
+              }}
+              rows={tableData}
+              columns={columns}
+              allowColumnResizing={true}
+              rowsPerPageOptions={[5, 10, 20, 100]}
+              loading={loading}
+            />
+          </div>
+        </Paper>
+      </Grid>
+
     </Dashboard>
   );
 }

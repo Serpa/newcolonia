@@ -162,18 +162,8 @@ function DashboardContent(props) {
           <Toolbar />
           <Container maxWidth="xl" sx={{ mt: 5, mb: 5 }}>
             <Grid container spacing={2}>
-
-              <Grid item xs={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {props.children}
-                </Paper>
-              </Grid>
+              
+              {props.children}
 
             </Grid>
             <Copyright sx={{ pt: 4 }} />
