@@ -1,7 +1,7 @@
 import { Button, CircularProgress, Grid, Paper, TextField } from '@mui/material'
-import { useSnackbar, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import Dashboard from '../../components/Dashboard';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router'
@@ -20,10 +20,9 @@ export default function Cadastro() {
 
   useEffect(() => {
     if (pescador === null) {
-      invalidId();
       router.push("/datagrid")
     }
-  }, [pescador])
+  }, [pescador,router])
 
 
   const sucessMSG = () => {

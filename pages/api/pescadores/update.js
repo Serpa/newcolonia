@@ -3,7 +3,7 @@ import { authOptions } from "../auth/[...nextauth]"
 import prisma from '../../../lib/prisma';
 import moment, { isDate } from 'moment';
 
-export default async (req, res) => {
+export default async function UpdateAPI (req, res) {
     const session = await unstable_getServerSession(req, res, authOptions);
     const convertDate = (date) => {
         console.log(isDate);

@@ -3,10 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -16,12 +13,13 @@ import { useForm } from "react-hook-form";
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
+import { CircularProgress } from '@mui/material';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://nupsi.uemgfrutal.com.br/">
         NUPSI
       </Link>{' '}
       {new Date().getFullYear()}
@@ -35,6 +33,7 @@ const theme = createTheme();
 export default function Login() {
 
   const [loginError, setLoginError] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const errorMsg = (msg) => {
@@ -50,6 +49,7 @@ export default function Login() {
 
   const { register, handleSubmit } = useForm();
   const onSubmit = data => {
+    setLoading(true);
     signIn("credentials", {
       usuario: data.usuario,
       senha: data.senha,
@@ -60,12 +60,14 @@ export default function Login() {
         if (result.status === 401) {
           errorMsg("Sua combinação de nome de usuário/senha esta incorreta. Por favor, tente novamente");
           setLoginError(true)
+          setLoading(false);
           setTimeout(() => {
             setLoginError(false)
           }, 3000);
         } else {
           errorMsg(result.error);
           setLoginError(true)
+          setLoading(false);
           setTimeout(() => {
             setLoginError(false)
           }, 3000);
@@ -77,7 +79,6 @@ export default function Login() {
 
 
   };
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -122,31 +123,17 @@ export default function Login() {
               autoComplete="current-password"
               {...register("senha")}
             />
-            {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          /> */}
-            <Button
+            {loading ? (<div style={{ display:"flex", justifyContent:"center", alignItems:"center" }}> <CircularProgress /></div>) : (<Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
               Entrar
-            </Button>
-            {/* <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid> */}
+            </Button>)}
+
           </Box>
+
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>

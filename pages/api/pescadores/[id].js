@@ -2,7 +2,7 @@ import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]"
 import prisma from '../../../lib/prisma';
 
-export default async (req, res) => {
+export default async function pescadorId (req, res) {
     const session = await unstable_getServerSession(req, res, authOptions);
     const { id } = req.query
     if (session) {
@@ -50,7 +50,7 @@ export default async (req, res) => {
                 acesso: true,
                 ativo: true,
                 nome_colonia: true
-              },
+            },
         });
 
         return res.status(200).json(pescadores);

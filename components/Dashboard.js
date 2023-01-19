@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -15,9 +14,11 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
+import { mainListItems } from './listItems';
 import { ExitToApp } from '@mui/icons-material';
 import { signOut } from 'next-auth/react';
+import { useSession } from "next-auth/react"
+import { useState } from 'react';
 
 function Copyright(props) {
   return (
@@ -31,6 +32,7 @@ function Copyright(props) {
     </Typography>
   );
 }
+
 
 const drawerWidth = 240;
 
@@ -81,7 +83,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent(props) {
-  const [open, setOpen] = React.useState(true);
+  const { data: session, status } = useSession()
+  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -117,6 +120,16 @@ function DashboardContent(props) {
             >
               Dashboard
             </Typography>
+
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              {session.user?.usuario.toUpperCase()}
+            </Typography>
             <IconButton color="inherit" onClick={() => signOut()}>
               <ExitToApp>
                 <NotificationsIcon />
@@ -141,7 +154,7 @@ function DashboardContent(props) {
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {/* {secondaryListItems} */}
           </List>
         </Drawer>
         <Box

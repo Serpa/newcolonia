@@ -2,7 +2,7 @@ import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]"
 import prisma from '../../../lib/prisma';
 
-export default async (req, res) => {
+export default async function PescadoresAPI (req, res) {
     const session = await unstable_getServerSession(req, res, authOptions);
     if (session) {
         const pescadores = await prisma.pescadores.findMany({
