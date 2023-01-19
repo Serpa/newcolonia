@@ -45,7 +45,7 @@ export const authOptions = {
                 token.user = user;
             }
             return token;
-        },
+        }
     }
 }
 export default NextAuth(authOptions)

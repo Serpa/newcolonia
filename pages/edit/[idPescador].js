@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Grid, Paper, TextField } from '@mui/material'
 import { useSnackbar, withSnackbar } from 'notistack';
-import Dashboard from '../index';
+import Dashboard from '../../components/Dashboard';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react"

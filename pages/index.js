@@ -1,199 +1,127 @@
-import * as React from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from '../components/listItems';
-import { unstable_getServerSession } from 'next-auth';
-import { authOptions } from "./api/auth/[...nextauth]"
-import { ExitToApp } from '@mui/icons-material';
-import { signOut } from 'next-auth/react';
+import React, { useState, useEffect } from 'react'
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { Button, CircularProgress, Grid, Paper } from '@mui/material';
+import Dashboard from '../components/Dashboard';
+import { useRouter } from 'next/router';
+import EditIcon from '@mui/icons-material/Edit';
+import DocumentDialog from '../components/DocumentDialog'
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
-const drawerWidth = 240;
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
+export default function DatagridPescadores() {
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
+  const [tableData, setTableData] = useState([])
+  const [loading, setLoading] = useState(true);// loading não ta funcionando
+  const router = useRouter();
 
-const mdTheme = createTheme();
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState();
 
-function DashboardContent(props) {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
+  const handleClose = (value) => {
+    setOpen(false);
+    console.log(value);
+    setSelectedValue(value);
+  };
+
+  useEffect(() => {
+    fetch("/api/pescadores")
+      .then((data) => data.json())
+      .then((data) => setTableData(data))
+    setLoading(false)
+  }, [])
+
+  const columns = [
+    { field: 'nome', headerName: 'Nome', flex: 1 },
+    { field: 'telefone', headerName: 'Telefone', flex: 1 },
+    { field: 'celular', headerName: 'Celular', flex: 1 },
+    { field: 'endereco', headerName: 'Endereço', flex: 1 },
+    { field: 'cidade', headerName: 'Cidade', flex: 1 },
+    { field: 'vencimento', headerName: 'Vencimento', flex: 1 },
+    { field: 'nascimento', headerName: 'Nascimento', flex: 1 },
+    {
+      field: "Alterar",
+      renderCell: (cellValues) => {
+        return (
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => router.push(`/edit/${cellValues.id}`)}
+          >
+            <EditIcon />
+          </Button>
+        );
+      }, flex: 1
+    },
+    {
+      field: "Documentos",
+      renderCell: (cellValues) => {
+        return (
+          <>
+            <Button variant="outlined" onClick={handleClickOpen}>
+              <AttachFileIcon />
+            </Button>
+            <DocumentDialog
+              pescador={cellValues.row}
+              selectedValue={selectedValue}
+              open={open}
+              onClose={handleClose} />
+          </>
+        );
+      }, flex: 1
+    }
+  ]
+
   return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: '24px', // keep right padding when drawer closed
-            }}
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: '36px',
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              Dashboard
-            </Typography>
-            <IconButton color="inherit" onClick={() => signOut()}>
-              <ExitToApp>
-                <NotificationsIcon />
-              </ExitToApp>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
-        <Box
-          component="main"
+
+    <Dashboard>
+
+      <Grid item xs={12}>
+        <Paper
           sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          <Toolbar />
-          <Container maxWidth="xl" sx={{ mt: 5, mb: 5 }}>
-            <Grid container spacing={2}>
-              
-              {props.children}
+          <div style={{ height: 800, width: '100%' }}>
+            <DataGrid
+              components={{
+                Toolbar: GridToolbar,
+                LoadingOverlay: CircularProgress,
+              }}
+              rows={tableData}
+              columns={columns}
+              allowColumnResizing={true}
+              rowsPerPageOptions={[5, 10, 20, 100]}
+              loading={loading}
+            />
+          </div>
+        </Paper>
+      </Grid>
 
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
-      </Box>
-    </ThemeProvider>
+    </Dashboard>
   );
 }
 
-export default function Dashboard(props) {
-  return <DashboardContent >
-    {props.children}
-  </DashboardContent>;
-}
+// export async function getServerSideProps(context) {
+//   const session = await unstable_getServerSession(context.req, context.res, authOptions)
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false
+//       }
+//     }
+//   }
 
-export async function getServerSideProps(context) {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions)
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false
-      }
-    }
-  }
+//   return {
+//     props: {
 
-  return {
-    props: {
-
-    }
-  }
-}
+//     }
+//   }
+// }

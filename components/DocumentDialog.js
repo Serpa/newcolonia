@@ -1,9 +1,12 @@
 
-import { AddIcCallOutlined, PersonPinCircleOutlined } from '@mui/icons-material'
+import { AddIcCallOutlined, PersonPinCircleOutlined, Router } from '@mui/icons-material'
 import { Avatar, CircularProgress, Dialog, DialogTitle, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Docx from './docxGenerate/Docx'
+import { useRouter } from 'next/router';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import AddIcon from '@mui/icons-material/Add';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
@@ -12,6 +15,7 @@ const fetcher = url => fetch(url).then(r => r.json())
 export default function DocumentDialog(props) {
 
     const { onClose, selectedValue, open } = props;
+    const router = useRouter();
 
     const handleClose = () => {
         onClose(selectedValue);
@@ -37,7 +41,7 @@ export default function DocumentDialog(props) {
         )
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>Set backup account</DialogTitle>
+            <DialogTitle style={{ display: 'flex', alignSelf: 'center' }} >Documentos</DialogTitle>
             <List sx={{ pt: 0 }}>
                 {documentos.map((doc) => (
                     <Docx key={doc.id} doc={doc} pescador={props.pescador}>
@@ -45,7 +49,7 @@ export default function DocumentDialog(props) {
                             <ListItemButton onClick={() => handleListItemClick(doc)}>
                                 <ListItemAvatar>
                                     <Avatar>
-                                        <PersonPinCircleOutlined />
+                                        <InsertDriveFileIcon />
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText primary={doc.nomeDocumento} />
@@ -57,14 +61,14 @@ export default function DocumentDialog(props) {
                 <ListItem disableGutters>
                     <ListItemButton
                         autoFocus
-                        onClick={() => handleListItemClick('addAccount')}
+                        onClick={() => router.push('/documentos')}
                     >
                         <ListItemAvatar>
                             <Avatar>
-                                <AddIcCallOutlined />
+                                <AddIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary="Add account" />
+                        <ListItemText primary="Adicionar Documento" />
                     </ListItemButton>
                 </ListItem>
 

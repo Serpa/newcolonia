@@ -15,15 +15,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm } from "react-hook-form";
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router'
-import { unstable_getServerSession } from 'next-auth';
-import { authOptions } from "./api/auth/[...nextauth]"
+import { useSnackbar } from 'notistack';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        NUPSI
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -34,6 +33,19 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
+
+  const [loginError, setLoginError] = React.useState(false)
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const errorMsg = (msg) => {
+    enqueueSnackbar(msg, {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center'
+      },
+      variant: 'error'
+    })
+  };
   const router = useRouter()
 
   const { register, handleSubmit } = useForm();
@@ -44,14 +56,19 @@ export default function Login() {
       callbackUrl: '/',
       redirect: false
     }).then(result => {
-      console.log(result);
       if (result.error !== null) {
         if (result.status === 401) {
-          setLoginError(
-            "Your username/password combination was incorrect. Please try again"
-          );
+          errorMsg("Sua combinação de nome de usuário/senha esta incorreta. Por favor, tente novamente");
+          setLoginError(true)
+          setTimeout(() => {
+            setLoginError(false)
+          }, 3000);
         } else {
-          setLoginError(result.error);
+          errorMsg(result.error);
+          setLoginError(true)
+          setTimeout(() => {
+            setLoginError(false)
+          }, 3000);
         }
       } else {
         router.push(result.url);
@@ -78,17 +95,18 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              error={loginError}
+              id="usuario"
+              label="Usuário"
+              name="usuario"
+              autoComplete="usuario"
               autoFocus
               {...register("usuario")}
             />
@@ -96,59 +114,42 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              error={loginError}
+              name="senha"
+              label="Senha"
               type="password"
-              id="password"
+              id="senha"
               autoComplete="current-password"
               {...register("senha")}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            {/* <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          /> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Entrar
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
+            {/* <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
             </Grid>
+            <Grid item>
+              <Link href="#" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid> */}
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
-}
-
-export async function getServerSideProps(context) {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions)
-  if (session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false
-      }
-    }
-  }
-
-  return {
-    props: {
-
-    }
-  }
 }
