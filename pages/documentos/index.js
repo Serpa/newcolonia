@@ -50,7 +50,7 @@ export default function Cadastro() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const sucessMSG = () => {
-    enqueueSnackbar('Pescador cadastrado com sucesso!', { variant: 'success' });
+    enqueueSnackbar('Documento cadastrado com sucesso!', { variant: 'success' });
   };
 
   const errorMSG = () => {
@@ -70,6 +70,7 @@ export default function Cadastro() {
     }).then((response) => {
       if (response.status === 200) {
         sucessMSG()
+        console.log(response);
       } else {
         errorMSG()
       }
