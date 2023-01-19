@@ -37,7 +37,7 @@ export default async function handler(req, res) {
             resource_type: 'raw',
             filename_override: req.file.originalname
         }, (error, result) => {
-            if (error) res.json({ status: 500, message: err.message });
+            if (error) res.json({ status: 500, message: error });
             if (result) prismaInsert(req, res, result)
         }
     )
