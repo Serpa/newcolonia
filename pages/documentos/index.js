@@ -1,13 +1,13 @@
 import { Button, Grid, Paper, TextField } from '@mui/material'
-import { useSnackbar, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import Dashboard from '../../components/Dashboard';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useSession } from "next-auth/react"
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, ptBR } from '@mui/x-data-grid';
 import useSWR from 'swr'
-import Link from 'next/link';
 import { useRouter } from 'next/router';
+import moment from 'moment';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
@@ -40,7 +40,11 @@ export default function Cadastro() {
         );
       }, flex: 1
     },
-    { field: 'dataCriacao', headerName: 'Data de cadastro', flex: 1 },
+    { field: 'dataCriacao', headerName: 'Data de cadastro',renderCell: (cellValues) => {
+      return (
+        moment(cellValues.row.dataCriacao, "YYYY-MM-DD").format("DD/MM/YYYY")
+      );
+    },flex: 1 },
   ]
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -52,13 +56,6 @@ export default function Cadastro() {
   const errorMSG = () => {
     enqueueSnackbar('Erro ao cadastrar!', { variant: 'error' });
   };
-
-  let documents = [];
-  const onChangeFile = (event) => {
-    for (let i = 0; i < event.target.files.length; i++) {
-      documents.push(event.target.files[i]);
-    }
-  }
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -134,6 +131,7 @@ export default function Cadastro() {
               columns={columns}
               allowColumnResizing={true}
               rowsPerPageOptions={[5, 10, 20, 100]}
+              localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
             />
           </div>
         </Paper>
