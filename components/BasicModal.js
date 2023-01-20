@@ -34,12 +34,14 @@ const generateDocument = (pescadorData, docData) => {
   loadFile(
     docData.urlDocumento,
     function (error, content) {
+      console.log('Cheguei aqui 3');
       if (error) {
+        console.log('Cheguei aqui 4',error);
         throw error;
       }
       const zip = new PizZip(content);
       const doc = new Docxtemplater().loadZip(zip);
-      console.log('Cheguei aqui 2');
+      console.log('Cheguei aqui 5');
       doc.render(pescador);
       const blob = doc.getZip().generate({
         type: "blob",
