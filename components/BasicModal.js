@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import Docxtemplater from "docxtemplater";
-import PizZip from "pizzip";
+import JSZip from "jszip";
 import axios from "axios";
 import { saveAs } from "file-saver";
 
@@ -28,7 +28,7 @@ const generateDocument = async (pescadorData, docData) => {
   //Fetching the template
   const template = await axios.get(url, { responseType: 'arraybuffer' });
   const content = new Uint8Array(template.data);
-  const zip = new PizZip(content);
+  const zip = new JSZip(content);
   const doc = new Docxtemplater();
   doc.loadZip(zip);
 
@@ -49,12 +49,8 @@ const generateDocument = async (pescadorData, docData) => {
   }
 
   //Buffer the generated document
-  const blob = doc.getZip().generate({
-    type: "blob",
-    mimeType:
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  });
-  saveAs(blob, "output.docx");
+  const buf = doc.getZip().generate({ type: "blob" });
+  saveAs(buf, `${filename}.docx`);
 };
 
 
