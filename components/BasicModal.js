@@ -8,18 +8,9 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
+import axios from "axios";
 import { saveAs } from "file-saver";
 
-let PizZipUtils = null;
-if (typeof window !== "undefined") {
-  import("pizzip/utils/index.js").then(function (r) {
-    PizZipUtils = r;
-  });
-}
-
-function loadFile(url, callback) {
-  PizZipUtils.getBinaryContent(url, callback);
-}
 
 var data = new Date();
 var dia = String(data.getDate()).padStart(2, "0");
@@ -28,32 +19,42 @@ var ano = data.getFullYear();
 var dataAtual = dia + "/" + mes + "/" + ano;
 
 
-const generateDocument = (pescadorData, docData) => {
+const generateDocument = async (pescadorData, docData) => {
   console.log('Cheguei aqui 1');
-  const pescador = { ...pescadorData, data: dataAtual };
-  loadFile(
-    docData.urlDocumento,
-    function (error, content) {
-      console.log('Cheguei aqui 3');
-      console.log('Content',content);
-      if (error) {
-        console.log(error);
-        throw error;
-      }
-      const zip = new PizZip(content);
-      const doc = new Docxtemplater().loadZip(zip);
-      console.log('Cheguei aqui 5');
-      doc.render(pescador);
-      const blob = doc.getZip().generate({
-        type: "blob",
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-      console.log('Cheguei aqui 3');
-      // Output the document using Data-URI
-      saveAs(blob, "output.docx");
-    }
-  );
+  const data = { ...pescadorData, data: dataAtual };
+  const url = docData.urlDocumento
+  const filename = docData.nomeDocumento
+
+  //Fetching the template
+  const template = await axios.get(url, { responseType: 'arraybuffer' });
+  const content = new Uint8Array(template.data);
+  const zip = new PizZip(content);
+  const doc = new Docxtemplater();
+  doc.loadZip(zip);
+
+  //Setting the data
+  doc.setData(data);
+  try {
+    //Rendering the document
+    doc.render();
+  } catch (error) {
+    const e = {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+      properties: error.properties,
+    };
+    console.log(JSON.stringify({ error: e }));
+    throw error;
+  }
+
+  //Buffer the generated document
+  const blob = doc.getZip().generate({
+    type: "blob",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  });
+  saveAs(blob, "output.docx");
 };
 
 
