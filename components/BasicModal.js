@@ -31,13 +31,16 @@ const generateDocument = async (pescadorData, docData) => {
   const zip = new JSZip(content);
   const doc = new Docxtemplater();
   doc.loadZip(zip);
-
+  console.log('Cheguei aqui 2',zip);
   //Setting the data
   doc.setData(data);
+  console.log('Cheguei aqui 3',data);
   try {
     //Rendering the document
     doc.render();
+    console.log('Cheguei aqui 4');
   } catch (error) {
+    console.log(error,'cheguei 5');
     const e = {
       message: error.message,
       name: error.name,
