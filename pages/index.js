@@ -4,7 +4,6 @@ import { Button, CircularProgress, Grid, Paper } from '@mui/material'
 import Dashboard from '../components/Dashboard';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
-import { format } from 'date-fns'
 
 import BasicModal from '../components/BasicModal';
 import moment from 'moment';
@@ -107,14 +106,6 @@ export default function DatagridPescadores() {
               rowsPerPageOptions={[5, 10, 20, 100]}
               loading={loading}
               localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-              getRowClassName={(params) => {
-                // let vencimento = moment().format("DD/MM/YYYY"); return "highlight"
-                new Date().toDateString() > new Date(moment(params.row.vencimento).format("YYYY/MM/DD")).toDateString() ? "highlight" : ""
-                // if (dayjs().isAfter(dayjs(params.row.vencimento)))
-                // console.log(dayjs().isAfter(dayjs(,"DD/MM/YYYY")))
-                // dayjs(vencimento.format("YYYY/MM/DDDD")).isBefore(now.format("YYYY/MM/DDDD"))? console.log('sim', params.row.vencimento) : console.log('não', params.row.vencimento);
-                // dayjs(params.row.vencimento).isBefore(dayjs())? console.log('sim', params.row.vencimento) : console.log('não', params.row.vencimento);
-              }}
             />
           </div>
         </Paper>
