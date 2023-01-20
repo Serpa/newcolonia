@@ -22,7 +22,6 @@ var dataAtual = dia + "/" + mes + "/" + ano;
 export const generateDocument = (pescadorData,docData) => {
   const pescador = { ...pescadorData, data: dataAtual };
   const content = docData.urlDocumento;
-  console.log(pescador,content);
   loadFile(content, function (error, content) {
     if (error) {
       throw error;
