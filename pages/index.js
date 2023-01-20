@@ -42,12 +42,7 @@ export default function DatagridPescadores() {
     { field: 'endereco', headerName: 'Endereço', flex: 1 },
     { field: 'cidade', headerName: 'Cidade', flex: 1 },
     {
-      field: 'vencimento', type: 'date', headerName: 'Vencimento',
-      renderCell: (cellValues) => {
-        return (
-          moment(cellValues.row.vencimento, "DD/MM/YYYY").format("DD/MM/YYYY")
-        );
-      }, flex: 1
+      field: 'vencimento', headerName: 'Vencimento', flex: 1
     },
     { field: 'nascimento', headerName: 'Nascimento', flex: 1 },
     {
