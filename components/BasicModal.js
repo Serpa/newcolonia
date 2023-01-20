@@ -28,7 +28,8 @@ export default function BasicModal(props) {
   const handleClose = () => setOpen(false);
   const handleDoc = (doc) => {
     console.log(props.pescador,doc);
-    generateDocument(props.pescador, doc);
+    console.log(generateDocument(props.pescador, doc));
+    // generateDocument(props.pescador, doc);
     setOpen(false);
   }
 
