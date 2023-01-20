@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { DataGrid, GridToolbar, ptBR } from '@mui/x-data-grid';
-import { Button, Avatar, CircularProgress, Dialog, DialogTitle, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Grid, Paper } from '@mui/material'
+import { Button, CircularProgress, Grid, Paper } from '@mui/material'
 import Dashboard from '../components/Dashboard';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import AddIcon from '@mui/icons-material/Add';
+import { format } from 'date-fns'
+
 import BasicModal from '../components/BasicModal';
+import moment from 'moment';
 
 
 
@@ -42,7 +42,14 @@ export default function DatagridPescadores() {
     { field: 'celular', headerName: 'Celular', flex: 1 },
     { field: 'endereco', headerName: 'Endereço', flex: 1 },
     { field: 'cidade', headerName: 'Cidade', flex: 1 },
-    { field: 'vencimento', headerName: 'Vencimento', flex: 1 },
+    {
+      field: 'vencimento', type: 'date', headerName: 'Vencimento',
+      renderCell: (cellValues) => {
+        return (
+          moment(cellValues.row.vencimento, "DD/MM/YYYY").format("DD/MM/YYYY")
+        );
+      }, flex: 1
+    },
     { field: 'nascimento', headerName: 'Nascimento', flex: 1 },
     {
       field: "Alterar",
@@ -62,7 +69,7 @@ export default function DatagridPescadores() {
       field: "Documentos",
       renderCell: (cellValues) => {
         return (
-          <BasicModal pescador={cellValues.row}/>
+          <BasicModal pescador={cellValues.row} />
         );
       }, flex: 1
     }
@@ -82,6 +89,14 @@ export default function DatagridPescadores() {
         >
           <div style={{ height: 800, width: '100%' }}>
             <DataGrid
+              sx={{
+                ".highlight": {
+                  bgcolor: "#fcd4d4",
+                  "&:hover": {
+                    bgcolor: "#e2e6fd",
+                  },
+                },
+              }}
               components={{
                 Toolbar: GridToolbar,
                 LoadingOverlay: CircularProgress,
@@ -92,6 +107,14 @@ export default function DatagridPescadores() {
               rowsPerPageOptions={[5, 10, 20, 100]}
               loading={loading}
               localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+              getRowClassName={(params) => {
+                // let vencimento = moment().format("DD/MM/YYYY"); return "highlight"
+                new Date().toDateString() > new Date(moment(params.row.vencimento).format("YYYY/MM/DD")).toDateString() ? "highlight" : ""
+                // if (dayjs().isAfter(dayjs(params.row.vencimento)))
+                // console.log(dayjs().isAfter(dayjs(,"DD/MM/YYYY")))
+                // dayjs(vencimento.format("YYYY/MM/DDDD")).isBefore(now.format("YYYY/MM/DDDD"))? console.log('sim', params.row.vencimento) : console.log('não', params.row.vencimento);
+                // dayjs(params.row.vencimento).isBefore(dayjs())? console.log('sim', params.row.vencimento) : console.log('não', params.row.vencimento);
+              }}
             />
           </div>
         </Paper>

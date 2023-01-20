@@ -22,7 +22,7 @@ export default function Cadastro() {
     if (pescador === null) {
       router.push("/datagrid")
     }
-  }, [pescador,router])
+  }, [pescador, router])
 
 
   const sucessMSG = () => {
@@ -51,7 +51,7 @@ export default function Cadastro() {
       .then((response) => {
         if (response.status === 200) {
           sucessMSG()
-          router.push('/datagrid')
+          router.push('/')
         } else {
           errorMSG()
         }
@@ -110,6 +110,7 @@ export default function Cadastro() {
     setValue('profissao', pescador?.profissao);
     setValue('estado_civil', pescador?.estado_civil);
     setValue('id', pescador?.id);
+    setValue('vencimento', convertDate(pescador?.vencimento));
   }
 
   return (
@@ -149,6 +150,17 @@ export default function Cadastro() {
               fullWidth
               required
               {...register("nome", { required: true })}
+            />
+
+            <TextField
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              id="vencimento"
+              label="Vencimento"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              {...register("vencimento")}
             />
 
             <TextField

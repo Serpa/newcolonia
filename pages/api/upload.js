@@ -1,69 +1,56 @@
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import streamifier from "streamifier";
-import { unstable_getServerSession } from "next-auth/next"
+import cloudinary from "cloudinary";
+import { IncomingForm } from "formidable";
 import { authOptions } from "./auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
 import prisma from '../../lib/prisma';
 
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-const uploadMiddleware = upload.single("file");
-
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-    secure: true,
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
 });
 
-function runMiddleware(req, res, fn) {
-    return new Promise((resolve, reject) => {
-        fn(req, res, (result) => {
-            if (result instanceof Error) {
-                return reject(result);
-            }
-            return resolve(result);
-        });
-    });
-}
-export default async function handler(req, res) {
-    const session = await unstable_getServerSession(req, res, authOptions);
-    await runMiddleware(req, res, uploadMiddleware);
-    const stream = await cloudinary.uploader.upload_stream(
-        {
-            folder: "demo",
-            use_filename: true,
-            resource_type: 'raw',
-            filename_override: req.file.originalname
-        }, (error, result) => {
-            if (error) res.json({ status: 500, message: error });
-            if (result) prismaInsert(req, res, result)
-        }
-    )
-    const readableStream = streamifier.createReadStream(req.file.buffer).pipe(stream);
-
-    const prismaInsert = async (req, res, result) => {
-        if (session) {
-            try {
-                await prisma.documentos.create({
-                    data: {
-                        nomeDocumento: req.body.nomeDocumento,
-                        urlDocumento: result.secure_url,
-                        idColonia: session.user?.acesso,
-                        idUsuario: session.user?.id
-                    }
-                })
-                return res.status(200).end();
-            } catch (error) {
-                return res.status(503).json({ err: err.toString() });
-            }
-        }
-    }
-    res.end()
-}
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: {
+    bodyParser: false
+  }
 };
+
+export default async (req, res) => {
+  const session = await unstable_getServerSession(req, res, authOptions);
+  const data = await new Promise((resolve, reject) => {
+    const form = new IncomingForm();
+
+    form.parse(req, (err, fields, files) => {
+      if (err) return reject(err);
+      resolve({ fields, files });
+    });
+  });
+
+  const file = data?.files?.inputFile.filepath;
+
+  try {
+    const response = await cloudinary.v2.uploader.upload(file, {
+      folder: "demo",
+      use_filename: true,
+      resource_type: 'raw',
+      filename_override: data?.files?.inputFile.originalFilename
+    });
+    try {
+      const insert = await prisma.documentos.create({
+        data: {
+          nomeDocumento: data?.fields?.nomeDocumento,
+          urlDocumento: response.url,
+          idColonia: session.user?.acesso,
+          idUsuario: session.user?.id
+        }
+      })
+      return res.json(insert);
+    } catch (error) {
+      return res.json(err);
+    }
+  } catch (err) {
+    return res.json(err);
+  }
+};
+

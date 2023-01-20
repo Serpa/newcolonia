@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, TextField } from '@mui/material'
+import { Button, CircularProgress, Grid, Paper, TextField } from '@mui/material'
 import { useSnackbar } from 'notistack';
 import Dashboard from '../../components/Dashboard';
 import React, { useEffect, useState } from 'react'
@@ -11,7 +11,7 @@ import moment from 'moment';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
-export default function Cadastro() {
+export default function Documentos() {
   const { data: session, status } = useSession()
   const { register, handleSubmit, reset } = useForm();
   const [tableDate, setTableData] = useState([]);
@@ -40,11 +40,13 @@ export default function Cadastro() {
         );
       }, flex: 1
     },
-    { field: 'dataCriacao', headerName: 'Data de cadastro',renderCell: (cellValues) => {
-      return (
-        moment(cellValues.row.dataCriacao, "YYYY-MM-DD").format("DD/MM/YYYY")
-      );
-    },flex: 1 },
+    {
+      field: 'dataCriacao', headerName: 'Data de cadastro', renderCell: (cellValues) => {
+        return (
+          moment(cellValues.row.dataCriacao, "YYYY-MM-DD").format("DD/MM/YYYY")
+        );
+      }, flex: 1
+    },
   ]
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -57,25 +59,30 @@ export default function Cadastro() {
     enqueueSnackbar('Erro ao cadastrar!', { variant: 'error' });
   };
 
-  const onSubmit = async (data) => {
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [nomeDocumento, setNomeDocumento] = useState("");
+  const [docFile, setDocFile] = useState([]);
+  const onChange = async (event) => {
+    setShowSpinner(true);
+    event.preventDefault();
     const formData = new FormData();
-    formData.append('file', data.file[0]);
-    formData.append('nomeDocumento', data.nomeDocumento);
-    fetch("/api/upload", {
-      method: 'POST',
-      body: formData,
-      headers: {
-        Accept: "multipart/form-data",
-      },
-    }).then((response) => {
-      if (response.status === 200) {
-        sucessMSG()
-        console.log(response);
-      } else {
-        errorMSG()
-      }
+    console.log(docFile);
+    const file = docFile;
+    formData.append("inputFile", file);
+    formData.append("nomeDocumento", nomeDocumento);
 
-    }).catch((response) => { console.log(response) });
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      setShowSpinner(false);
+    } finally {
+      setShowSpinner(false);
+    }
   };
 
   return (
@@ -88,7 +95,7 @@ export default function Cadastro() {
             flexDirection: 'column',
           }}
         >
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form >
 
             <TextField
               type="text"
@@ -98,18 +105,14 @@ export default function Cadastro() {
               variant="outlined"
               placeholder="Digite o nome do Documento"
               margin="normal"
+              value={nomeDocumento}
+              onChange={(e) => setNomeDocumento(e.target.value)}
               fullWidth
               required
-              {...register("nomeDocumento", { required: true })}
             />
-
-            <Button variant="contained" component="label">
-              Upload
-              <input hidden accept=".doc, .docx" type="file" {...register('file')} />
-            </Button>
-
+            <input type="file" onChange={(e) => setDocFile(...docFile, e.target.files[0])} />
             <div style={{ display: "flex", margin: "5px", justifyContent: "center", alignItems: "center", padding: "10px" }}>
-              <Button type="submit" variant="contained" style={{ width: "300px" }}>Cadastrar</Button>
+              {showSpinner ? <CircularProgress /> : <Button type="button" onClick={onChange} variant="contained" style={{ width: "300px" }}>Cadastrar</Button>}
             </div>
           </form>
         </Paper>
