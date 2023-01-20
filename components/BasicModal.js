@@ -24,23 +24,25 @@ const generateDocument = async (pescadorData, docData) => {
   const data = { ...pescadorData, data: dataAtual };
   const url = docData.urlDocumento
   const filename = docData.nomeDocumento
-
+  console.log('Cheguei aqui 2',filename,url);
   //Fetching the template
   const template = await axios.get(url, { responseType: 'arraybuffer' });
+  console.log('template',template);
   const content = new Uint8Array(template.data);
+  console.log(content);
   const zip = new JSZip(content);
   const doc = new Docxtemplater();
   doc.loadZip(zip);
-  console.log('Cheguei aqui 2',zip);
+  console.log('Cheguei aqui 3',zip);
   //Setting the data
   doc.setData(data);
-  console.log('Cheguei aqui 3',data);
+  console.log('Cheguei aqui 4',data);
   try {
     //Rendering the document
     doc.render();
-    console.log('Cheguei aqui 4');
+    console.log('Cheguei aqui 5');
   } catch (error) {
-    console.log(error,'cheguei 5');
+    console.log(error,'cheguei 6');
     const e = {
       message: error.message,
       name: error.name,
