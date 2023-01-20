@@ -12,13 +12,13 @@ import { saveAs } from "file-saver";
 
 let PizZipUtils = null;
 if (typeof window !== "undefined") {
-    import("pizzip/utils/index.js").then(function (r) {
-        PizZipUtils = r;
-    });
+  import("pizzip/utils/index.js").then(function (r) {
+    PizZipUtils = r;
+  });
 }
 
 function loadFile(url, callback) {
-    PizZipUtils.getBinaryContent(url, callback);
+  PizZipUtils.getBinaryContent(url, callback);
 }
 
 var data = new Date();
@@ -35,8 +35,9 @@ const generateDocument = (pescadorData, docData) => {
     docData.urlDocumento,
     function (error, content) {
       console.log('Cheguei aqui 3');
+      console.log('Content',content);
       if (error) {
-        console.log(JSON.stringify(error));
+        console.log(error);
         throw error;
       }
       const zip = new PizZip(content);
