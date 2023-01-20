@@ -29,6 +29,7 @@ var dataAtual = dia + "/" + mes + "/" + ano;
 
 
 const generateDocument = (pescadorData, docData) => {
+  console.log('Cheguei aqui 1');
   const pescador = { ...pescadorData, data: dataAtual };
   loadFile(
     docData.urlDocumento,
@@ -38,13 +39,14 @@ const generateDocument = (pescadorData, docData) => {
       }
       const zip = new PizZip(content);
       const doc = new Docxtemplater().loadZip(zip);
-      // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+      console.log('Cheguei aqui 2');
       doc.render(pescador);
       const blob = doc.getZip().generate({
         type: "blob",
         mimeType:
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
+      console.log('Cheguei aqui 3');
       // Output the document using Data-URI
       saveAs(blob, "output.docx");
     }
