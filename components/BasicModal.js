@@ -36,7 +36,7 @@ const generateDocument = (pescadorData, docData) => {
     function (error, content) {
       console.log('Cheguei aqui 3');
       if (error) {
-        console.log('Cheguei aqui 4',error);
+        console.log(JSON.stringify(error));
         throw error;
       }
       const zip = new PizZip(content);
