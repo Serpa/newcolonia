@@ -10,16 +10,15 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 
-const path = require("path");
 let PizZipUtils = null;
 if (typeof window !== "undefined") {
-  import("pizzip/utils/index.js").then(function (r) {
-    PizZipUtils = r;
-  });
+    import("pizzip/utils/index.js").then(function (r) {
+        PizZipUtils = r;
+    });
 }
 
 function loadFile(url, callback) {
-  PizZipUtils.getBinaryContent(url, callback);
+    PizZipUtils.getBinaryContent(url, callback);
 }
 
 var data = new Date();
@@ -28,31 +27,30 @@ var mes = String(data.getMonth() + 1).padStart(2, "0");
 var ano = data.getFullYear();
 var dataAtual = dia + "/" + mes + "/" + ano;
 
+
 const generateDocument = (pescadorData, docData) => {
   const pescador = { ...pescadorData, data: dataAtual };
-  const content = docData.urlDocumento;
-  loadFile(content, function (error, content) {
-    if (error) {
-      throw error;
+  loadFile(
+    docData.urlDocumento,
+    function (error, content) {
+      if (error) {
+        throw error;
+      }
+      const zip = new PizZip(content);
+      const doc = new Docxtemplater().loadZip(zip);
+      // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+      doc.render(pescador);
+      const blob = doc.getZip().generate({
+        type: "blob",
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+      // Output the document using Data-URI
+      saveAs(blob, "output.docx");
     }
-    const zip = new PizZip(content);
-    const doc = new Docxtemplater(zip, {
-      paragraphLoop: true,
-      linebreaks: true,
-      nullGetter() {
-        return "";
-      },
-    });
-
-    doc.render(pescador);
-    const out = doc.getZip().generate({
-      type: "blob",
-      mimeType:
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    }); //Output the document using Data-URI
-    saveAs(out, "output.docx");
-  });
+  );
 };
+
 
 const style = {
   position: 'absolute',
