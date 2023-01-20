@@ -34,7 +34,6 @@ export default async (req, res) => {
       folder: "demo",
       use_filename: true,
       resource_type: 'raw',
-      public_id: "doc",
       filename_override: data?.files?.inputFile.originalFilename
     });
     try {
