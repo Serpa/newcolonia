@@ -68,7 +68,6 @@ export default function BasicModal(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleDoc = (doc) => {
-    generateDocument(doc.urlDocumento,props.pescador,);
     setOpen(false);
   }
 
@@ -117,7 +116,7 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {documentos.map((doc) => {
               return (
-                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => handleDoc(doc)}>
+                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc.urlDocumento,props.pescador)}>
                   {doc.nomeDocumento}
                 </Button>
               )
