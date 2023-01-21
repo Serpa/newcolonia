@@ -17,7 +17,7 @@ export const config = {
   }
 };
 
-export default async (req, res) => {
+export default async function UploadAPI(req, res) {
   const session = await unstable_getServerSession(req, res, authOptions);
   const data = await new Promise((resolve, reject) => {
     const form = new IncomingForm();
@@ -35,10 +35,10 @@ export default async (req, res) => {
       folder: "demo",
       use_filename: true,
       resource_type: 'raw',
-      public_id: "doc",
       filename_override: data?.files?.inputFile.originalFilename
     });
     try {
+      console.log(response);
       const insert = await prisma.documentos.create({
         data: {
           nomeDocumento: data?.fields?.nomeDocumento,

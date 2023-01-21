@@ -31,18 +31,18 @@ export default function BasicModal(props) {
     setOpen(false);
   }
 
-  const generateDocument = async (url, data) => {
+  const generateDocument = async (documento, data) => {
     let hoje = moment().format("DD/MM/YYYY");
     let pescador = { ...data, data: hoje }
     try {
-      const response = await fetch(url);
+      const response = await fetch(documento.urlDocumento);
       const buffer = await response.arrayBuffer();
       const zip = new PizZip(buffer);
       const doc = new docxtemplater().loadZip(zip);
       doc.setData(pescador);
       doc.render();
       const output = doc.getZip().generate({ type: 'blob' });
-      FileSaver.saveAs(output, 'document.docx');
+      FileSaver.saveAs(output, documento.nomeDocumento + '.docx');
     } catch (error) {
       console.error(error);
     }
@@ -78,7 +78,7 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {documentos.map((doc) => {
               return (
-                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc.urlDocumento, props.pescador)}>
+                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc, props.pescador)}>
                   {doc.nomeDocumento}
                 </Button>
               )
