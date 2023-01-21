@@ -6,56 +6,47 @@ import Modal from '@mui/material/Modal';
 import useSWR from 'swr'
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
-import Docxtemplater from "docxtemplater";
-import PizZip from "pizzip";
-import { saveAs } from "file-saver";
+import docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import FileSaver from 'file-saver';
 
-let PizZipUtils = null;
-if (typeof window !== "undefined") {
-  import("pizzip/utils/index.js").then(function (r) {
-    PizZipUtils = r;
-  });
-}
+// const generateDocument = (pescadorData, docData) => {
+//   console.log('Cheguei aqui 1');
+//   const pescador = { ...pescadorData, data: dataAtual };
+//   fetch(docData.urlDocumento)
+//   .then(
+//     response => response.text() // .json(), .blob(), etc.
+//   ).then(
+//     text => console.log(text) // Handle here
+//   );
+//   loadFile(
+//     ,
+//     function (error, content) {
+//       console.log('Cheguei aqui 3');
+//       console.log('Content', docData.urlDocumento);
+//       if (error) {
+//         console.log(error);
+//         console.log(JSON.stringify(error));
+//         throw error;
+//       }
+//       const zip = new PizZip(content);
+//       const doc = new Docxtemplater().loadZip(zip);
+//       console.log('Cheguei aqui 5');
+//       doc.render(pescador);
+//       const blob = doc.getZip().generate({
+//         type: "blob",
+//         mimeType:
+//           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+//       });
+//       console.log('Cheguei aqui 3');
+//       // Output the document using Data-URI
+//       saveAs(blob, "output.docx");
+//     }
+//   );
+// };
 
-function loadFile(url, callback) {
-  PizZipUtils.getBinaryContent(url, callback);
-}
-
-var data = new Date();
-var dia = String(data.getDate()).padStart(2, "0");
-var mes = String(data.getMonth() + 1).padStart(2, "0");
-var ano = data.getFullYear();
-var dataAtual = dia + "/" + mes + "/" + ano;
 
 
-const generateDocument = (pescadorData, docData) => {
-  console.log('Cheguei aqui 1');
-  const pescador = { ...pescadorData, data: dataAtual };
-  loadFile(
-    docData.urlDocumento,
-    function (error, content) {
-      console.log('Cheguei aqui 3');
-      console.log('Content', docData.urlDocumento);
-      if (error) {
-        console.log(error);
-        console.log(JSON.stringify(error));
-        throw error;
-      }
-      const zip = new PizZip(content);
-      const doc = new Docxtemplater().loadZip(zip);
-      console.log('Cheguei aqui 5');
-      doc.render(pescador);
-      const blob = doc.getZip().generate({
-        type: "blob",
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-      console.log('Cheguei aqui 3');
-      // Output the document using Data-URI
-      saveAs(blob, "output.docx");
-    }
-  );
-};
 
 
 const style = {
@@ -77,9 +68,24 @@ export default function BasicModal(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleDoc = (doc) => {
-    generateDocument(props.pescador, doc);
+    generateDocument(doc.urlDocumento,props.pescador,);
     setOpen(false);
   }
+
+  const generateDocument = async (url, data) => {
+    try {
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      const zip = new PizZip(buffer);
+      const doc = new docxtemplater().loadZip(zip);
+      doc.setData(data);
+      doc.render();
+      const output = doc.getZip().generate({ type: 'blob' });
+      FileSaver.saveAs(output, 'document.docx');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetcher = url => fetch(url).then(r => r.json())
   const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher)
