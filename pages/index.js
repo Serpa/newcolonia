@@ -12,18 +12,6 @@ export default function DatagridPescadores() {
   const [loading, setLoading] = useState(true);// loading não ta funcionando
   const router = useRouter();
 
-  const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState({});
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedValue({ doc: value });
-  };
-
   useEffect(() => {
     fetch("/api/pescadores")
       .then((data) => data.json())
