@@ -5,6 +5,7 @@ import Dashboard from '../components/Dashboard';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
 import BasicModal from '../components/BasicModal';
+import moment from 'moment';
 
 export default function DatagridPescadores() {
 
@@ -15,8 +16,10 @@ export default function DatagridPescadores() {
   useEffect(() => {
     fetch("/api/pescadores")
       .then((data) => data.json())
-      .then((data) => setTableData(data))
-    setLoading(false)
+      .then((data) => {
+        setTableData(data)
+        setLoading(false)
+      })
   }, [])
 
   const columns = [
@@ -26,7 +29,12 @@ export default function DatagridPescadores() {
     { field: 'endereco', headerName: 'Endereço', flex: 1 },
     { field: 'cidade', headerName: 'Cidade', flex: 1 },
     {
-      field: 'vencimento', headerName: 'Vencimento', flex: 1
+      field: 'vencimento', type: 'date', headerName: 'Vencimento',
+      renderCell: (cellValues) => {
+        return (
+          moment(cellValues.row.vencimento, "DD/MM/YYYY").format("DD/MM/YYYY")
+        );
+      }, flex: 1
     },
     { field: 'nascimento', headerName: 'Nascimento', flex: 1 },
     {
@@ -66,7 +74,7 @@ export default function DatagridPescadores() {
           }}
         >
           <div style={{ height: 800, width: '100%' }}>
-            <DataGrid
+            {loading ? (<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}> <CircularProgress /></div>) : (<DataGrid
               sx={{
                 ".highlight": {
                   bgcolor: "#fcd4d4",
@@ -77,15 +85,16 @@ export default function DatagridPescadores() {
               }}
               components={{
                 Toolbar: GridToolbar,
-                LoadingOverlay: CircularProgress,
               }}
               rows={tableData}
               columns={columns}
               allowColumnResizing={true}
               rowsPerPageOptions={[5, 10, 20, 100]}
-              loading={loading}
               localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-            />
+              getRowClassName={(params) => {
+                return moment(params.row.vencimento, 'DD/MM/YYYY').isBefore(moment(), 'day') ? 'highlight' : ''
+              }}
+            />)}
           </div>
         </Paper>
       </Grid>
