@@ -5,8 +5,11 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import useSWR from 'swr'
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { generateDocument } from './docxGenerate/Docx';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import FileSaver from 'file-saver';
+import moment from 'moment';
 
 const style = {
   position: 'absolute',
@@ -20,17 +23,30 @@ const style = {
   p: 4,
 };
 
-
-
 export default function BasicModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleDoc = (doc) => {
-    console.log(props.pescador);
-    generateDocument(props.pescador, doc);
     setOpen(false);
   }
+
+  const generateDocument = async (url, data) => {
+    let hoje = moment().format("DD/MM/YYYY");
+    let pescador = { ...data, data: hoje }
+    try {
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      const zip = new PizZip(buffer);
+      const doc = new docxtemplater().loadZip(zip);
+      doc.setData(pescador);
+      doc.render();
+      const output = doc.getZip().generate({ type: 'blob' });
+      FileSaver.saveAs(output, 'document.docx');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetcher = url => fetch(url).then(r => r.json())
   const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher)
@@ -62,7 +78,7 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {documentos.map((doc) => {
               return (
-                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => handleDoc(doc)}>
+                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc.urlDocumento, props.pescador)}>
                   {doc.nomeDocumento}
                 </Button>
               )

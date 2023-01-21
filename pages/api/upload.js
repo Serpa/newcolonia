@@ -7,7 +7,8 @@ import prisma from '../../lib/prisma';
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET
+  api_secret: process.env.API_SECRET,
+  secure: true,
 });
 
 export const config = {
@@ -40,7 +41,7 @@ export default async (req, res) => {
       const insert = await prisma.documentos.create({
         data: {
           nomeDocumento: data?.fields?.nomeDocumento,
-          urlDocumento: response.url,
+          urlDocumento: response.secure_url,
           idColonia: session.user?.acesso,
           idUsuario: session.user?.id
         }
