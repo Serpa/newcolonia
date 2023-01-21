@@ -5,7 +5,6 @@ import prisma from '../../../lib/prisma';
 export default async function CadastroAPI (req, res) {
     const session = await unstable_getServerSession(req, res, authOptions);
     const convertDate = (date) => {
-        console.log(isDate);
         let newDate = moment(date, "YYYY-MM-DD").format("DD/MM/YYYY")
         if (newDate != "Invalid date") {
             return newDate;
@@ -30,7 +29,6 @@ export default async function CadastroAPI (req, res) {
                 });
                 return res.status(200).end();
             } catch (err) {
-                console.log(err);
                 return res.status(503).json({ err: err.toString() });
             }
         } else {

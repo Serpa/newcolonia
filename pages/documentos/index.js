@@ -66,7 +66,6 @@ export default function Documentos() {
     setShowSpinner(true);
     event.preventDefault();
     const formData = new FormData();
-    console.log(docFile);
     const file = docFile;
     formData.append("inputFile", file);
     formData.append("nomeDocumento", nomeDocumento);
@@ -77,7 +76,6 @@ export default function Documentos() {
         body: formData
       });
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       setShowSpinner(false);
     } finally {

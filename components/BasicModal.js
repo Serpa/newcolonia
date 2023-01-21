@@ -10,45 +10,6 @@ import docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import FileSaver from 'file-saver';
 
-// const generateDocument = (pescadorData, docData) => {
-//   console.log('Cheguei aqui 1');
-//   const pescador = { ...pescadorData, data: dataAtual };
-//   fetch(docData.urlDocumento)
-//   .then(
-//     response => response.text() // .json(), .blob(), etc.
-//   ).then(
-//     text => console.log(text) // Handle here
-//   );
-//   loadFile(
-//     ,
-//     function (error, content) {
-//       console.log('Cheguei aqui 3');
-//       console.log('Content', docData.urlDocumento);
-//       if (error) {
-//         console.log(error);
-//         console.log(JSON.stringify(error));
-//         throw error;
-//       }
-//       const zip = new PizZip(content);
-//       const doc = new Docxtemplater().loadZip(zip);
-//       console.log('Cheguei aqui 5');
-//       doc.render(pescador);
-//       const blob = doc.getZip().generate({
-//         type: "blob",
-//         mimeType:
-//           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-//       });
-//       console.log('Cheguei aqui 3');
-//       // Output the document using Data-URI
-//       saveAs(blob, "output.docx");
-//     }
-//   );
-// };
-
-
-
-
-
 const style = {
   position: 'absolute',
   top: '50%',
@@ -61,8 +22,6 @@ const style = {
   p: 4,
 };
 
-
-
 export default function BasicModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -72,12 +31,14 @@ export default function BasicModal(props) {
   }
 
   const generateDocument = async (url, data) => {
+    let hoje = moment().format("DD/MM/YYYY");
+    let pescador = { ...data, data: hoje }
     try {
       const response = await fetch(url);
       const buffer = await response.arrayBuffer();
       const zip = new PizZip(buffer);
       const doc = new docxtemplater().loadZip(zip);
-      doc.setData(data);
+      doc.setData(pescador);
       doc.render();
       const output = doc.getZip().generate({ type: 'blob' });
       FileSaver.saveAs(output, 'document.docx');
@@ -116,7 +77,7 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {documentos.map((doc) => {
               return (
-                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc.urlDocumento,props.pescador)}>
+                <Button key={doc.id} fullWidth variant="text" color='success' endIcon={<FileDownloadIcon />} onClick={() => generateDocument(doc.urlDocumento, props.pescador)}>
                   {doc.nomeDocumento}
                 </Button>
               )

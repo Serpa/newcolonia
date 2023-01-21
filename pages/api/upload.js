@@ -41,7 +41,7 @@ export default async (req, res) => {
       const insert = await prisma.documentos.create({
         data: {
           nomeDocumento: data?.fields?.nomeDocumento,
-          urlDocumento: response.url,
+          urlDocumento: response.secure_url,
           idColonia: session.user?.acesso,
           idUsuario: session.user?.id
         }

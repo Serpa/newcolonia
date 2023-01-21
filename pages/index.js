@@ -4,11 +4,7 @@ import { Button, CircularProgress, Grid, Paper } from '@mui/material'
 import Dashboard from '../components/Dashboard';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
-
 import BasicModal from '../components/BasicModal';
-import moment from 'moment';
-
-
 
 export default function DatagridPescadores() {
 
