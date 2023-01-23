@@ -8,7 +8,10 @@ export default async function PescadoresAPI (req, res) {
         const pescadores = await prisma.pescadores.findMany({
             where: {
                 acesso: session.user?.acesso,
-            }
+            },
+            include: {
+              nome_colonia: true,
+            },
         });
 
         return res.status(200).json(pescadores);

@@ -50,6 +50,8 @@ model caixa3 {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model cpfs_invalidos {
   ficha             String  @db.VarChar(5)
   nome              String? @db.VarChar(50)
@@ -97,6 +99,8 @@ model incr {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model lista_cidades {
   cidade String? @db.VarChar(25)
   quant  BigInt?
@@ -104,6 +108,8 @@ model lista_cidades {
   @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model lista_estados {
   estado String? @db.VarChar(2)
@@ -113,14 +119,24 @@ model lista_estados {
 }
 
 model nome_colonia {
-  id         Int          @id @unique(map: "id")
-  nome       String       @db.VarChar(11)
-  pescadores pescadores[]
+  id             Int          @id @unique(map: "id")
+  nome           String       @db.VarChar(11)
+  colonia        String       @db.VarChar(255)
+  cidade_sede    String       @db.VarChar(255)
+  estado_sede    String       @db.VarChar(255)
+  razao_social   String       @db.VarChar(255)
+  cnpj           String       @db.VarChar(255)
+  sede           String       @db.VarChar(255)
+  presidente     String       @db.VarChar(255)
+  cpf_presidente String       @db.VarChar(255)
+  pescadores     pescadores[]
 
   @@index([id], map: "id_2")
   @@index([id], map: "id_3")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model nome_pai_mae {
   ficha             String?  @db.VarChar(5)
@@ -203,6 +219,8 @@ model pescadores {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model registros_colonia {
   acesso Int?
   quant  BigInt?
@@ -210,6 +228,8 @@ model registros_colonia {
   @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model rg_duplicado {
   ficha             String?  @db.VarChar(5)
@@ -247,6 +267,8 @@ model rg_duplicado {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model sem_contato {
   ficha             String?  @db.VarChar(5)
   nome              String?  @db.VarChar(50)
@@ -282,6 +304,8 @@ model sem_contato {
   @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model sem_data {
   ficha             String?  @db.VarChar(5)
@@ -319,6 +343,8 @@ model sem_data {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model todos {
   ficha      String?  @db.VarChar(5)
   nome       String?  @db.VarChar(50)
@@ -339,6 +365,7 @@ model usuarios {
 
 model documentos {
   id            Int      @id @default(autoincrement())
+  public_id     String   @db.VarChar(255)
   nomeDocumento String   @db.VarChar(255)
   urlDocumento  String   @db.VarChar(255)
   idColonia     Int

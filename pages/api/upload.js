@@ -32,7 +32,6 @@ export default async function UploadAPI(req, res) {
 
   try {
     const response = await cloudinary.v2.uploader.upload(file, {
-      folder: "demo",
       use_filename: true,
       resource_type: 'raw',
       filename_override: data?.files?.inputFile.originalFilename
@@ -42,6 +41,7 @@ export default async function UploadAPI(req, res) {
       const insert = await prisma.documentos.create({
         data: {
           nomeDocumento: data?.fields?.nomeDocumento,
+          public_id: response.public_id,
           urlDocumento: response.secure_url,
           idColonia: session.user?.acesso,
           idUsuario: session.user?.id

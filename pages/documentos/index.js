@@ -8,6 +8,7 @@ import { DataGrid, GridToolbar, ptBR } from '@mui/x-data-grid';
 import useSWR from 'swr'
 import { useRouter } from 'next/router';
 import moment from 'moment';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
@@ -15,7 +16,7 @@ export default function Documentos() {
   const { data: session, status } = useSession()
   const { register, handleSubmit, reset } = useForm();
   const [tableDate, setTableData] = useState([]);
-  const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher)
+  const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher,{ refreshInterval: 1000 })
   const router = useRouter();
 
   useEffect(() => {
@@ -26,6 +27,13 @@ export default function Documentos() {
 
   const columns = [
     { field: 'nomeDocumento', headerName: 'Nome', flex: 1 },
+    {
+      field: 'dataCriacao', headerName: 'Data de cadastro', renderCell: (cellValues) => {
+        return (
+          moment(cellValues.row.dataCriacao, "YYYY-MM-DD").format("DD/MM/YYYY")
+        );
+      }, flex: 1
+    },
     {
       field: "urlDocumento", headerName: 'Documento',
       renderCell: (cellValues) => {
@@ -41,13 +49,35 @@ export default function Documentos() {
       }, flex: 1
     },
     {
-      field: 'dataCriacao', headerName: 'Data de cadastro', renderCell: (cellValues) => {
+      field: 'Excluir', headerName: 'Excluir', renderCell: (cellValues) => {
         return (
-          moment(cellValues.row.dataCriacao, "YYYY-MM-DD").format("DD/MM/YYYY")
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleRemove(cellValues.row)}
+          >
+            <DeleteForeverIcon />
+          </Button>
         );
       }, flex: 1
     },
   ]
+
+  const handleRemove = data => {
+    let result = confirm("Deseja excluir o documento " + data.nomeDocumento + " ?");
+    if (result) {
+      try {
+        fetch("/api/documentos/delete", {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { "Content-type": "application/json; charset=UTF-8" }
+        }).then((response) => console.log(response));
+      } catch (error) {
+      } finally {
+      }
+    }
+  };
+
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
