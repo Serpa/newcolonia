@@ -16,7 +16,7 @@ export default function Documentos() {
   const { data: session, status } = useSession()
   const { register, handleSubmit, reset } = useForm();
   const [tableDate, setTableData] = useState([]);
-  const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher,{ refreshInterval: 1000 })
+  const { data: documentos, error } = useSWR(`/api/documentos/`, fetcher, { refreshInterval: 1000 })
   const router = useRouter();
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Documentos() {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { "Content-type": "application/json; charset=UTF-8" }
-        }).then((response) => console.log(response));
+        }).then((response) =>  enqueueSnackbar('Documento excluido!', { variant: 'success' }));
       } catch (error) {
       } finally {
       }
@@ -107,9 +107,15 @@ export default function Documentos() {
       });
       const data = await response.json();
     } catch (error) {
+      errorMSG();
       setShowSpinner(false);
+      formData.delete("inputFile");
+      setNomeDocumento("");
     } finally {
+      sucessMSG();
       setShowSpinner(false);
+      formData.delete("inputFile");
+      setNomeDocumento("");
     }
   };
 
