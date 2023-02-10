@@ -60,7 +60,7 @@ export default function DatagridPescadores() {
       field: "Documentos",
       renderCell: (cellValues) => {
         return (
-          <BasicModal pescador={cellValues.row} />
+          <BasicModal pescador={cellValues.row}/>
         );
       }, flex: 1
     }

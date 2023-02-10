@@ -9,6 +9,7 @@ import useSWR from 'swr'
 import { useRouter } from 'next/router';
 import moment from 'moment';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ModalInfo from '../../components/ModalInfo';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
@@ -71,7 +72,7 @@ export default function Documentos() {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { "Content-type": "application/json; charset=UTF-8" }
-        }).then((response) =>  enqueueSnackbar('Documento excluido!', { variant: 'success' }));
+        }).then((response) => enqueueSnackbar('Documento excluido!', { variant: 'success' }));
       } catch (error) {
       } finally {
       }
@@ -145,8 +146,11 @@ export default function Documentos() {
               required
             />
             <input type="file" onChange={(e) => setDocFile(...docFile, e.target.files[0])} />
-            <div style={{ display: "flex", margin: "5px", justifyContent: "center", alignItems: "center", padding: "10px" }}>
+            <div style={{ display: "flex", margin: "5px", justifyContent: "center", alignItems: "center", padding: "10px",width:"100%" }}>
               {showSpinner ? <CircularProgress /> : <Button type="button" onClick={onChange} variant="contained" style={{ width: "300px" }}>Cadastrar</Button>}
+              <div style={{ display: "flex", margin: "5px", justifyContent: "flex-end", alignItems: "center", padding: "10px", width:"50%"}}>
+                <ModalInfo/>
+              </div>
             </div>
           </form>
         </Paper>
