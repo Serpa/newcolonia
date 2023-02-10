@@ -13,12 +13,12 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
-import { ExitToApp } from '@mui/icons-material';
-import { signOut } from 'next-auth/react';
+
+
 import { useSession } from "next-auth/react"
 import { useState } from 'react';
+import ExitConfirm from './ExitConfirm';
 
 function Copyright(props) {
   return (
@@ -118,7 +118,7 @@ function DashboardContent(props) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              {session.user?.nome_colonia.razao_social.toUpperCase()}
             </Typography>
 
             <Typography
@@ -130,11 +130,7 @@ function DashboardContent(props) {
             >
               {session.user?.usuario.toUpperCase()}
             </Typography>
-            <IconButton color="inherit" onClick={() => signOut()}>
-              <ExitToApp>
-                <NotificationsIcon />
-              </ExitToApp>
-            </IconButton>
+            <ExitConfirm/>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>

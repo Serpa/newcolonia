@@ -38,13 +38,18 @@ export default function DatagridPescadores() {
     },
     { field: 'nascimento', headerName: 'Nascimento', flex: 1 },
     {
-      field: "Alterar",
+      field: "Ações",
       renderCell: (cellValues) => {
         return (
           <Button
             variant="contained"
             color="warning"
-            onClick={() => router.push(`/edit/${cellValues.id}`)}
+            onClick={() => {
+              router.push({
+                pathname: '/edit/[pid]',
+                query: { pid: cellValues.id },
+              })
+            }}
           >
             <EditIcon />
           </Button>

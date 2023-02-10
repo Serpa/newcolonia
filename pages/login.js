@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm } from "react-hook-form";
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
 import { CircularProgress } from '@mui/material';
@@ -123,7 +123,7 @@ export default function Login() {
               autoComplete="current-password"
               {...register("senha")}
             />
-            {loading ? (<div style={{ display:"flex", justifyContent:"center", alignItems:"center" }}> <CircularProgress /></div>) : (<Button
+            {loading ? (<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}> <CircularProgress /></div>) : (<Button
               type="submit"
               fullWidth
               variant="contained"
@@ -139,4 +139,19 @@ export default function Login() {
       </Container>
     </ThemeProvider>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 }

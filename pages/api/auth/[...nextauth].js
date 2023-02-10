@@ -14,7 +14,10 @@ export const authOptions = {
                 const dbUser = await prisma.usuarios.findUnique({
                     where: {
                         usuario: credentials.usuario
-                    }
+                    },
+                    include: {
+                        nome_colonia: true,
+                    },
                 })
                 if (dbUser) {
                     if (dbUser.senha == credentials.senha) {

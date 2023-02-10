@@ -7,10 +7,11 @@ import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import moment from 'moment';
+import DeleteConfirm from '../../components/DeleteConfirm';
 
 const fetcher = url => fetch(url).then(r => r.json())
 
-export default function Cadastro() {
+export default function EditPescador() {
   const { data: session, status } = useSession()
   const { register, handleSubmit, reset, setValue } = useForm();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -523,8 +524,10 @@ export default function Cadastro() {
               {...register("senha_caepf")}
             />
 
-            <div style={{ display: "flex", margin: "5px", justifyContent: "center", alignItems: "center", padding: "10px" }}>
+            <div style={{ display: "flex", margin: "5px", justifyContent: "space-around", alignItems: "center", padding: "10px" }}>
+              <Button type="button" variant="contained" color='inherit' style={{ width: "300px" }} onClick={()=> router.push('/')}>Voltar</Button>
               <Button type="submit" variant="contained" style={{ width: "300px" }}>Salvar</Button>
+              <DeleteConfirm pescador={pescador}></DeleteConfirm>
             </div>
           </form>
 
