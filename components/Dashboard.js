@@ -118,7 +118,7 @@ function DashboardContent(props) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              {session.user?.nome_colonia.razao_social.toUpperCase()}
+              {session.user?.nome_colonia?.razao_social.toUpperCase()}
             </Typography>
 
             <Typography
@@ -130,7 +130,7 @@ function DashboardContent(props) {
             >
               {session.user?.usuario.toUpperCase()}
             </Typography>
-            <ExitConfirm/>
+            <ExitConfirm />
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -168,7 +168,7 @@ function DashboardContent(props) {
           <Toolbar />
           <Container maxWidth="xl" sx={{ mt: 5, mb: 5 }}>
             <Grid container spacing={2}>
-              
+
               {props.children}
 
             </Grid>
